@@ -1,11 +1,34 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/andersjanmyr/battlesnake/api"
 )
+
+func LocalhostToIP(next http.Handler) http.Handler {
+	ip := IP()
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		host, port := getHostPort(r.Host)
+		url := fmt.Sprintf("http://%s%s%s", ip, port, r.URL.Path)
+		if host == "127.0.0.1" || host == "localhost" {
+			http.Redirect(w, r, url, http.StatusMovedPermanently)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func getHostPort(s string) (string, string) {
+	ss := strings.Split(s, ":")
+	if len(ss) < 2 {
+		return ss[0], ""
+	}
+	return ss[0], ":" + ss[1]
+}
 
 func Index(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
@@ -13,6 +36,7 @@ func Index(res http.ResponseWriter, req *http.Request) {
 	<title>Anders Janmyr's Battlesnake</title>
 	<h1>Anders Janmyr Battlesnake</h1>
 	<a href="https://github.com/andersjanmyr/battlesnake">https://github.com/andersjanmyr/battlesnake</a>
+
 	<h2>Routes</h2>
 	<ul>
 	<li><a href="/start">/start</a></li>

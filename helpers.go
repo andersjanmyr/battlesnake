@@ -3,10 +3,40 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"net"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
+
+func ips() []string {
+	ifaces, _ := net.Interfaces()
+	ips := []string{}
+	for _, i := range ifaces {
+		addrs, _ := i.Addrs()
+		for _, addr := range addrs {
+			var ip net.IP
+			switch v := addr.(type) {
+			case *net.IPNet:
+				ip = v.IP
+			case *net.IPAddr:
+				ip = v.IP
+			}
+			ips = append(ips, ip.String())
+		}
+	}
+	return ips
+}
+
+func IP() string {
+	for _, ip := range ips() {
+		if strings.Contains(ip, ".") && ip != "127.0.0.1" {
+			return ip
+		}
+	}
+	return "missing"
+}
 
 func respond(res http.ResponseWriter, obj interface{}) {
 	res.Header().Set("Content-Type", "application/json")

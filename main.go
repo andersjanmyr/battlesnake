@@ -1,17 +1,18 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 )
 
 func main() {
-	http.HandleFunc("/", Index)
-	http.HandleFunc("/start", Start)
-	http.HandleFunc("/move", Move)
-	http.HandleFunc("/end", End)
-	http.HandleFunc("/ping", Ping)
+	handleRoute("/", Index)
+	handleRoute("/start", Start)
+	handleRoute("/move", Move)
+	handleRoute("/end", End)
+	handleRoute("/ping", Ping)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -21,6 +22,11 @@ func main() {
 	// Add filename into logging messages
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	log.Printf("Running server on port %s...\n", port)
+	url := fmt.Sprintf("http://%s:%s/", IP(), port)
+	log.Printf("Server started %s\n", url)
 	http.ListenAndServe(":"+port, LoggingHandler(http.DefaultServeMux))
+}
+
+func handleRoute(path string, f func(w http.ResponseWriter, r *http.Request)) {
+	http.Handle(path, LocalhostToIP(http.HandlerFunc(f)))
 }
