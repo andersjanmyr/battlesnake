@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/andersjanmyr/battlesnake/pkg/empty"
 )
 
 func main() {
@@ -18,6 +20,8 @@ func main() {
 	if port == "" {
 		port = "9000"
 	}
+
+	battlesnake = empty.New()
 
 	// Add filename into logging messages
 	log.SetFlags(log.LstdFlags | log.Lshortfile)

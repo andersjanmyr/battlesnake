@@ -36,7 +36,9 @@ type SnakeRequest struct {
 }
 
 type StartResponse struct {
-	Color string `json:"color,omitempty"`
+	Color    string `json:"color,omitempty"`
+	HeadType string `json:"headType,omitempty"`
+	TailType string `json:"tailType,omitempty"`
 }
 
 type MoveResponse struct {
@@ -46,4 +48,10 @@ type MoveResponse struct {
 func DecodeSnakeRequest(req *http.Request, decoded *SnakeRequest) error {
 	err := json.NewDecoder(req.Body).Decode(&decoded)
 	return err
+}
+
+type BattleSnake interface {
+	Start(r *SnakeRequest) *StartResponse
+	Move(r *SnakeRequest) *MoveResponse
+	End(r *SnakeRequest) string
 }
