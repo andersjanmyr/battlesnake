@@ -91,7 +91,6 @@ var Heads = []Head{
 type Tail string
 
 const (
-	TailRegular     Tail = "regular"
 	TailBlockBum    Tail = "block-bum"
 	TailBolt        Tail = "bolt"
 	TailCurled      Tail = "curled"
@@ -99,6 +98,7 @@ const (
 	TailFreckled    Tail = "freckled"
 	TailHook        Tail = "hook"
 	TailPixel       Tail = "pixel"
+	TailRegular     Tail = "regular"
 	TailRoundBum    Tail = "round-bum"
 	TailSharp       Tail = "sharp"
 	TailSkinny      Tail = "skinny"
@@ -106,7 +106,6 @@ const (
 )
 
 var Tails = []Tail{
-	TailRegular,
 	TailBlockBum,
 	TailBolt,
 	TailCurled,
@@ -114,6 +113,7 @@ var Tails = []Tail{
 	TailFreckled,
 	TailHook,
 	TailPixel,
+	TailRegular,
 	TailRoundBum,
 	TailSharp,
 	TailSkinny,
