@@ -13,6 +13,7 @@ const (
 	Snake
 	Food
 	Wall
+	You
 )
 
 func PossibleMoves(req *api.SnakeRequest, direction api.Move) []api.Move {
@@ -21,8 +22,8 @@ func PossibleMoves(req *api.SnakeRequest, direction api.Move) []api.Move {
 	for _, m := range ms {
 		c := nextCoord(req.You.Body[0], m)
 		fmt.Println("next", req.You.Body[0], m, c)
-		v := ValueAt(req.Board, c)
-		if v == Food || v == Empty {
+		v := ValueAt(req.Board, req.You, c)
+		if v == Food || v == Empty || v == You {
 			mz = append(mz, m)
 		}
 	}
@@ -53,12 +54,15 @@ func Opposite(dir api.Move) api.Move {
 	return opposites[dir]
 }
 
-func ValueAt(b api.Board, c api.Coord) Value {
+func ValueAt(b api.Board, s api.Snake, c api.Coord) Value {
 	if c.X < 0 || c.Y < 0 || c.X >= b.Width || c.Y >= b.Height {
 		return Wall
 	}
 	if coordTaken(b.Food, c) {
 		return Food
+	}
+	if coordTaken(s.Body, c) {
+		return You
 	}
 	for _, s := range b.Snakes {
 		if coordTaken(s.Body, c) {
