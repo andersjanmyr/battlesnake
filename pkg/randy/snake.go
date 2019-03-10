@@ -1,8 +1,18 @@
 package randy
 
-import "github.com/andersjanmyr/battlesnake/api"
+import (
+	"fmt"
+	"math/rand"
 
-type snake struct{}
+	"github.com/andersjanmyr/battlesnake/api"
+	"github.com/andersjanmyr/battlesnake/pkg/core"
+)
+
+type snake struct {
+	lastMove string
+}
+
+var _ api.BattleSnake = &snake{}
 
 // New creates a battlesnake
 func New() api.BattleSnake {
@@ -10,13 +20,19 @@ func New() api.BattleSnake {
 	return &s
 }
 
-func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
-	return &api.StartResponse{}
+func (s *snake) Start(r *api.StartRequest) *api.StartResponse {
+	return &api.StartResponse{
+		Color: "FF0000",
+	}
 }
-func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
-	return &api.MoveResponse{Move: "down"}
+func (s *snake) Move(r *api.Game) *api.MoveResponse {
+	moves := core.PossibleMoves(r, s.lastMove)
+	random := rand.Intn(len(moves))
+	s.lastMove = moves[random]
+	fmt.Println(moves, s.lastMove)
+	return &api.MoveResponse{Move: s.lastMove}
 }
 
-func (s *snake) End(r *api.SnakeRequest) string {
+func (s *snake) End(r *api.Game) string {
 	return ""
 }

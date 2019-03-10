@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/andersjanmyr/battlesnake/pkg/empty"
+	"github.com/andersjanmyr/battlesnake/pkg/randy"
 )
 
 func main() {
@@ -21,13 +21,13 @@ func main() {
 		port = "9000"
 	}
 
-	battlesnake = empty.New()
+	battlesnake = randy.New()
 
 	// Add filename into logging messages
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	url := fmt.Sprintf("http://%s:%s/", IP(), port)
-	log.Printf("Server started %s\n", url)
+	log.Printf("Server started at url\n%s\n", url)
 	http.ListenAndServe(":"+port, LoggingHandler(http.DefaultServeMux))
 }
 

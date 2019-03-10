@@ -28,9 +28,10 @@ func Index(res http.ResponseWriter, req *http.Request) {
 }
 
 func Start(w http.ResponseWriter, r *http.Request) {
-	decoded := api.SnakeRequest{}
-	err := api.DecodeSnakeRequest(r, &decoded)
+	decoded := api.StartRequest{}
+	err := api.DecodeRequest(r, &decoded)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -40,26 +41,27 @@ func Start(w http.ResponseWriter, r *http.Request) {
 }
 
 func Move(w http.ResponseWriter, r *http.Request) {
-	decoded := api.SnakeRequest{}
-	err := api.DecodeSnakeRequest(r, &decoded)
+	decoded := api.Game{}
+	err := api.DecodeRequest(r, &decoded)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	dump(decoded)
 
-	respond(w, battlesnake.Start(&decoded))
+	respond(w, battlesnake.Move(&decoded))
 }
 
 func End(w http.ResponseWriter, r *http.Request) {
-	decoded := api.SnakeRequest{}
-	err := api.DecodeSnakeRequest(r, &decoded)
+	decoded := api.EndRequest{}
+	err := api.DecodeRequest(r, &decoded)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	dump(decoded)
-	respond(w, battlesnake.Start(&decoded))
+	respond(w, nil)
 }
 
 func Ping(res http.ResponseWriter, req *http.Request) {
