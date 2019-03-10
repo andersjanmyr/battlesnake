@@ -22,7 +22,12 @@ func New() api.BattleSnake {
 
 func (s *snake) Start(r *api.StartRequest) *api.StartResponse {
 	return &api.StartResponse{
-		Color: "FF0000",
+		Color:          "FF0000",
+		SecondaryColor: "FF0000",
+		Taunt:          "I'm as randy as they come!",
+		HeadType:       "fang",
+		TailType:       "block-bum",
+		HeadURL:        "https://i1.rgstatic.net/ii/profile.image/292495968751622-1446747881753_Q128/Randy_Carney.jpg",
 	}
 }
 func (s *snake) Move(r *api.Game) *api.MoveResponse {
