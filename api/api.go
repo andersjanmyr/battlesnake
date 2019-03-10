@@ -2,56 +2,100 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"net/http/httputil"
 )
+
+type Coords struct {
+	Data []Coord
+}
 
 type Coord struct {
 	X int `json:"x"`
 	Y int `json:"y"`
 }
 
-type Snake struct {
-	ID     string  `json:"id"`
-	Name   string  `json:"name"`
-	Health int     `json:"health"`
-	Body   []Coord `json:"body"`
+type Snakes struct {
+	Data []Snake
 }
 
-type Board struct {
-	Height int     `json:"height"`
-	Width  int     `json:"width"`
-	Food   []Coord `json:"food"`
-	Snakes []Snake `json:"snakes"`
+type Snake struct {
+	ID     string `json:"id"`
+	Name   string `json:"name"`
+	Health int    `json:"health"`
+	Body   Coords `json:"body"`
+}
+
+type DeadSnakes struct {
+	Data []DeadSnake
+}
+
+type DeadSnake struct {
+	ID     string `json:"id"`
+	Length string `json:"length"`
+	Death  int    `json:"health"`
+}
+
+type Death struct {
+	Ture   int      `json:"turn"`
+	causes []string `json:"causes"`
 }
 
 type Game struct {
-	ID string `json:"id"`
+	ID     int    `json:"id"`
+	Turn   int    `json:"turn"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	Food   Coords `json:"food"`
+	Snakes Snakes `json:"snakes"`
+	You    Snake  `json:"you"`
 }
 
-type SnakeRequest struct {
-	Game  Game  `json:"game"`
-	Turn  int   `json:"turn"`
-	Board Board `json:"board"`
-	You   Snake `json:"you"`
+type StartRequest struct {
+	GameID int `json:"game_id"`
+	Width  int `json:"width"`
+	Height int `json:"height"`
 }
 
 type StartResponse struct {
-	Color    string `json:"color,omitempty"`
-	HeadType string `json:"headType,omitempty"`
-	TailType string `json:"tailType,omitempty"`
+	Color          string `json:"color,omitempty"`
+	SecondaryColor string `json:"secondary_color,omitempty"`
+	HeadURL        string `json:"head_url,omitempty"`
+	Taunt          string `json:"taunt,omitempty"`
+	HeadType       string `json:"head_type,omitempty"`
+	TailType       string `json:"tail_type,omitempty"`
+}
+
+type EndRequest struct {
+	GameID     int        `json:"game_id"`
+	Winners    []string   `json:"winners"`
+	DeadSnakes DeadSnakes `json:"dead_snakes"`
 }
 
 type MoveResponse struct {
 	Move string `json:"move"`
 }
 
-func DecodeSnakeRequest(req *http.Request, decoded *SnakeRequest) error {
+func NewCoords(c Coord) Coords {
+	return Coords{Data: []Coord{c}}
+}
+
+func NewMoveResponse(move string) *MoveResponse {
+	return &MoveResponse{Move: move}
+}
+
+func DecodeRequest(req *http.Request, decoded interface{}) error {
+	requestDump, err2 := httputil.DumpRequest(req, true)
+	if err2 != nil {
+		fmt.Println(err2)
+	}
+	fmt.Println("DECODE", string(requestDump))
 	err := json.NewDecoder(req.Body).Decode(&decoded)
 	return err
 }
 
 type BattleSnake interface {
-	Start(r *SnakeRequest) *StartResponse
-	Move(r *SnakeRequest) *MoveResponse
-	End(r *SnakeRequest) string
+	Start(r *StartRequest) *StartResponse
+	Move(r *Game) *MoveResponse
 }

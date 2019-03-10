@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"testing"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,7 +49,7 @@ func requestWithBody(body string) *http.Request {
 	return req
 }
 
-func createMockSnakeRequest() SnakeRequest {
+func createMockGame() Game {
 	c := Coord{
 		X: 1,
 		Y: 1,
@@ -57,32 +58,28 @@ func createMockSnakeRequest() SnakeRequest {
 		ID:     "123",
 		Name:   "snek",
 		Health: 1,
-		Body:   []Coord{c},
+		Body:   NewCoords(c),
 	}
-	b := Board{
+	sr := Game{
+		ID:     666,
 		Height: 10,
 		Width:  10,
-		Food:   []Coord{c},
+		Food:   NewCoords(c),
 		Snakes: []Snake{s},
-	}
-	g := Game{ID: "abc"}
-	sr := SnakeRequest{
-		Game:  g,
-		Board: b,
-		Turn:  10,
-		You:   s,
+		Turn:   10,
+		You:    s,
 	}
 	return sr
 }
 
 func TestDecodeSnakeRequest(t *testing.T) {
-	expected := SnakeRequest{}
+	expected := Game{}
 	req := requestWithBody(mockReq)
-	
-	result := SnakeRequest{}
-	err := DecodeSnakeRequest(req, &result)
+
+	result := Game{}
+	err := DecodeRequest(req, &result)
 	if assert.NoError(t, err) {
-		expected = createMockSnakeRequest()
+		expected = createMockGame()
 	}
 	assert.Equal(t, result, expected)
 }
