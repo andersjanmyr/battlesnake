@@ -3,12 +3,38 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/andersjanmyr/battlesnake/api"
+	"github.com/andersjanmyr/battlesnake/pkg/empty"
+	"github.com/andersjanmyr/battlesnake/pkg/horry"
+	"github.com/andersjanmyr/battlesnake/pkg/randy"
+	"github.com/gorilla/mux"
 )
 
-var battlesnake api.BattleSnake
+func initSnake(kind string) api.BattleSnake {
+	switch kind {
+	case "empty":
+		return empty.New()
+	case "horry":
+		return horry.New()
+	case "randy":
+		return randy.New()
+	default:
+		return randy.New()
+	}
+}
+
+var snakes = map[string]api.BattleSnake{}
+
+func getBattleSnake(kind, id string) api.BattleSnake {
+	key := fmt.Sprintf("%s-%s", kind, id)
+	if snake := snakes[key]; snake != nil {
+		return snake
+	}
+	snake := initSnake(kind)
+	snakes[key] = snake
+	return snake
+}
 
 func Index(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
@@ -36,8 +62,10 @@ func Start(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dump(decoded)
-
-	respond(w, battlesnake.Start(&decoded))
+	vars := mux.Vars(r)
+	fmt.Println(vars)
+	battleSnake := getBattleSnake(vars["kind"], vars["id"])
+	respond(w, battleSnake.Start(&decoded))
 }
 
 func Move(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +78,9 @@ func Move(w http.ResponseWriter, r *http.Request) {
 	}
 	dump(decoded)
 
-	respond(w, battlesnake.Move(&decoded))
+	vars := mux.Vars(r)
+	battleSnake := getBattleSnake(vars["kind"], vars["id"])
+	respond(w, battleSnake.Move(&decoded))
 }
 
 func End(w http.ResponseWriter, r *http.Request) {
@@ -66,25 +96,4 @@ func End(w http.ResponseWriter, r *http.Request) {
 
 func Ping(res http.ResponseWriter, req *http.Request) {
 	respond(res, "pong")
-}
-
-func LocalhostToIP(next http.Handler) http.Handler {
-	ip := IP()
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		host, port := getHostPort(r.Host)
-		url := fmt.Sprintf("http://%s%s%s", ip, port, r.URL.Path)
-		if host == "127.0.0.1" || host == "localhost" {
-			http.Redirect(w, r, url, http.StatusMovedPermanently)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
-}
-
-func getHostPort(s string) (string, string) {
-	ss := strings.Split(s, ":")
-	if len(ss) < 2 {
-		return ss[0], ""
-	}
-	return ss[0], ":" + ss[1]
 }

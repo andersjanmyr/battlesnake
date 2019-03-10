@@ -2,9 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/http/httputil"
 )
 
 type SnakeRequest struct {
@@ -56,11 +54,6 @@ func NewMoveResponse(move string) *MoveResponse {
 }
 
 func DecodeRequest(req *http.Request, decoded interface{}) error {
-	requestDump, err2 := httputil.DumpRequest(req, true)
-	if err2 != nil {
-		fmt.Println(err2)
-	}
-	fmt.Println("DECODE", string(requestDump))
 	err := json.NewDecoder(req.Body).Decode(&decoded)
 	return err
 }

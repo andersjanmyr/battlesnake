@@ -6,47 +6,38 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/andersjanmyr/battlesnake/api"
-	"github.com/andersjanmyr/battlesnake/pkg/empty"
-	"github.com/andersjanmyr/battlesnake/pkg/horry"
-	"github.com/andersjanmyr/battlesnake/pkg/randy"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	handleRoute("/", Index)
-	handleRoute("/start", Start)
-	handleRoute("/move", Move)
-	handleRoute("/end", End)
-	handleRoute("/ping", Ping)
+	router := mux.NewRouter()
+	router.Use(LoggingHandler, LocalhostToIP)
+	router.HandleFunc("/", Index)
+	addRoutes("/", router)
+	addRoutes("/{kind}/{id}", router)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "9000"
 	}
 
-	battlesnake = initSnake("randy")
-
 	// Add filename into logging messages
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	url := fmt.Sprintf("http://%s:%s/", IP(), port)
 	log.Printf("Server started at url\n%s\n", url)
-	http.ListenAndServe(":"+port, LoggingHandler(http.DefaultServeMux))
+	http.ListenAndServe(":"+port, router)
 }
 
-func handleRoute(path string, f func(w http.ResponseWriter, r *http.Request)) {
-	http.Handle(path, LocalhostToIP(http.HandlerFunc(f)))
-}
-
-func initSnake(name string) api.BattleSnake {
-	switch name {
-	case "empty":
-		return empty.New()
-	case "horry":
-		return horry.New()
-	case "randy":
-		return randy.New()
-	default:
-		return empty.New()
+func addRoutes(path string, router *mux.Router) {
+	var r *mux.Router
+	if path == "/" {
+		r = router
+	} else {
+		r = router.Methods("POST").PathPrefix(path).Subrouter()
 	}
+	r.HandleFunc("/start", Start)
+	r.HandleFunc("/move", Move)
+	r.HandleFunc("/end", End)
+	r.HandleFunc("/ping", Ping)
 }

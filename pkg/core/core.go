@@ -50,7 +50,6 @@ const (
 
 func PossibleMoves(req *api.SnakeRequest, direction string) []string {
 	ms := remove(moves(), opposite(direction))
-	fmt.Println(ms)
 	mz := []string{}
 	for _, m := range ms {
 		c := nextCoord(req.You.Body[0], m)
@@ -60,7 +59,6 @@ func PossibleMoves(req *api.SnakeRequest, direction string) []string {
 			mz = append(mz, m)
 		}
 	}
-	fmt.Println(mz)
 	return mz
 }
 
@@ -69,7 +67,6 @@ func moves() []string {
 }
 
 func remove(l []string, item string) []string {
-	fmt.Println("Removed", l, item)
 	for i, other := range l {
 		if other == item {
 			return append(l[:i], l[i+1:]...)
@@ -86,7 +83,6 @@ var opposites = map[string]string{
 }
 
 func opposite(dir string) string {
-	fmt.Println("opposites", dir, opposites[dir])
 	return opposites[dir]
 }
 

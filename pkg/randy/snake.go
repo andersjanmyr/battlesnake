@@ -22,7 +22,6 @@ func New() api.BattleSnake {
 
 func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 	return &api.StartResponse{
-		Color:    "FF0000",
 		HeadType: "fang",
 		TailType: "block-bum",
 	}

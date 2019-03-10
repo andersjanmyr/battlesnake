@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -9,6 +10,27 @@ import (
 	"strings"
 	"time"
 )
+
+func LocalhostToIP(next http.Handler) http.Handler {
+	ip := IP()
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		host, port := getHostPort(r.Host)
+		url := fmt.Sprintf("http://%s%s%s", ip, port, r.URL.Path)
+		if host == "127.0.0.1" || host == "localhost" {
+			http.Redirect(w, r, url, http.StatusMovedPermanently)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func getHostPort(s string) (string, string) {
+	ss := strings.Split(s, ":")
+	if len(ss) < 2 {
+		return ss[0], ""
+	}
+	return ss[0], ":" + ss[1]
+}
 
 func ips() []string {
 	ifaces, _ := net.Interfaces()
