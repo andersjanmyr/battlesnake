@@ -1,7 +1,6 @@
 package randy
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/andersjanmyr/battlesnake/api"
@@ -33,6 +32,5 @@ func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
 	}
 	random := rand.Intn(len(moves))
 	s.lastMove = moves[random]
-	fmt.Println(moves, s.lastMove)
 	return &api.MoveResponse{Move: s.lastMove}
 }
