@@ -12,13 +12,9 @@ func New() api.BattleSnake {
 	return &s
 }
 
-func (s *snake) Start(r *api.StartRequest) *api.StartResponse {
+func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 	return &api.StartResponse{}
 }
 func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
 	return &api.MoveResponse{Move: "down"}
-}
-
-func (s *snake) End(r *api.SnakeRequest) string {
-	return ""
 }

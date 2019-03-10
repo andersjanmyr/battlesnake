@@ -7,8 +7,22 @@ import (
 	"net/http/httputil"
 )
 
-type Coords struct {
-	Data []Coord
+type SnakeRequest struct {
+	Game  Game  `json:"game"`
+	Turn  int   `json:"turn"`
+	Board Board `json:"board"`
+	You   Snake `json:"you"`
+}
+
+type Game struct {
+	ID string `json:"id"`
+}
+
+type Board struct {
+	Height int     `json:"height"`
+	Width  int     `json:"width"`
+	Food   []Coord `json:"food"`
+	Snakes []Snake `json:"snakes"`
 }
 
 type Coord struct {
@@ -16,71 +30,27 @@ type Coord struct {
 	Y int `json:"y"`
 }
 
-type Snakes struct {
-	Data []Snake
-}
-
 type Snake struct {
-	ID     string `json:"id"`
-	Name   string `json:"name"`
-	Health int    `json:"health"`
-	Body   Coords `json:"body"`
-}
-
-type DeadSnakes struct {
-	Data []DeadSnake
-}
-
-type DeadSnake struct {
-	ID     string `json:"id"`
-	Length string `json:"length"`
-	Death  int    `json:"health"`
-}
-
-type Death struct {
-	Ture   int      `json:"turn"`
-	causes []string `json:"causes"`
-}
-
-type Game struct {
-	ID     int    `json:"id"`
-	Turn   int    `json:"turn"`
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-	Food   Coords `json:"food"`
-	Snakes Snakes `json:"snakes"`
-	You    Snake  `json:"you"`
-}
-
-type StartRequest struct {
-	GameID int `json:"game_id"`
-	Width  int `json:"width"`
-	Height int `json:"height"`
+	ID     string  `json:"id"`
+	Name   string  `json:"name"`
+	Health int     `json:"health"`
+	Body   []Coord `json:"body"`
 }
 
 type StartResponse struct {
-	Color          string `json:"color,omitempty"`
-	SecondaryColor string `json:"secondary_color,omitempty"`
-	HeadURL        string `json:"head_url,omitempty"`
-	Taunt          string `json:"taunt,omitempty"`
-	HeadType       string `json:"head_type,omitempty"`
-	TailType       string `json:"tail_type,omitempty"`
-}
-
-type EndRequest struct {
-	GameID     int        `json:"game_id"`
-	Winners    []string   `json:"winners"`
-	DeadSnakes DeadSnakes `json:"dead_snakes"`
+	Color    string `json:"color,omitempty"`
+	HeadType string `json:"headType,omitempty"`
+	TailType string `json:"tailType,omitempty"`
 }
 
 type MoveResponse struct {
 	Move string `json:"move"`
 }
 
-func NewCoords(c Coord) Coords {
-	return Coords{Data: []Coord{c}}
+func DecodeSnakeRequest(req *http.Request, decoded *SnakeRequest) error {
+	err := json.NewDecoder(req.Body).Decode(&decoded)
+	return err
 }
-
 func NewMoveResponse(move string) *MoveResponse {
 	return &MoveResponse{Move: move}
 }
@@ -96,6 +66,6 @@ func DecodeRequest(req *http.Request, decoded interface{}) error {
 }
 
 type BattleSnake interface {
-	Start(r *StartRequest) *StartResponse
-	Move(r *Game) *MoveResponse
+	Start(r *SnakeRequest) *StartResponse
+	Move(r *SnakeRequest) *MoveResponse
 }

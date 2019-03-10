@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/andersjanmyr/battlesnake/api"
+	"github.com/andersjanmyr/battlesnake/pkg/empty"
+	"github.com/andersjanmyr/battlesnake/pkg/horry"
 	"github.com/andersjanmyr/battlesnake/pkg/randy"
 )
 
@@ -21,7 +24,7 @@ func main() {
 		port = "9000"
 	}
 
-	battlesnake = randy.New()
+	battlesnake = initSnake("randy")
 
 	// Add filename into logging messages
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -33,4 +36,17 @@ func main() {
 
 func handleRoute(path string, f func(w http.ResponseWriter, r *http.Request)) {
 	http.Handle(path, LocalhostToIP(http.HandlerFunc(f)))
+}
+
+func initSnake(name string) api.BattleSnake {
+	switch name {
+	case "empty":
+		return empty.New()
+	case "horry":
+		return horry.New()
+	case "randy":
+		return randy.New()
+	default:
+		return empty.New()
+	}
 }

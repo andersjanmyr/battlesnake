@@ -20,24 +20,17 @@ func New() api.BattleSnake {
 	return &s
 }
 
-func (s *snake) Start(r *api.StartRequest) *api.StartResponse {
+func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 	return &api.StartResponse{
-		Color:          "FF0000",
-		SecondaryColor: "FF0000",
-		Taunt:          "I'm as randy as they come!",
-		HeadType:       "fang",
-		TailType:       "block-bum",
-		HeadURL:        "https://i1.rgstatic.net/ii/profile.image/292495968751622-1446747881753_Q128/Randy_Carney.jpg",
+		Color:    "FF0000",
+		HeadType: "fang",
+		TailType: "block-bum",
 	}
 }
-func (s *snake) Move(r *api.Game) *api.MoveResponse {
+func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
 	moves := core.PossibleMoves(r, s.lastMove)
 	random := rand.Intn(len(moves))
 	s.lastMove = moves[random]
 	fmt.Println(moves, s.lastMove)
 	return &api.MoveResponse{Move: s.lastMove}
-}
-
-func (s *snake) End(r *api.Game) string {
-	return ""
 }

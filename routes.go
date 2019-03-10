@@ -28,7 +28,7 @@ func Index(res http.ResponseWriter, req *http.Request) {
 }
 
 func Start(w http.ResponseWriter, r *http.Request) {
-	decoded := api.StartRequest{}
+	decoded := api.SnakeRequest{}
 	err := api.DecodeRequest(r, &decoded)
 	if err != nil {
 		fmt.Println(err)
@@ -41,7 +41,7 @@ func Start(w http.ResponseWriter, r *http.Request) {
 }
 
 func Move(w http.ResponseWriter, r *http.Request) {
-	decoded := api.Game{}
+	decoded := api.SnakeRequest{}
 	err := api.DecodeRequest(r, &decoded)
 	if err != nil {
 		fmt.Println(err)
@@ -54,14 +54,14 @@ func Move(w http.ResponseWriter, r *http.Request) {
 }
 
 func End(w http.ResponseWriter, r *http.Request) {
-	decoded := api.EndRequest{}
-	err := api.DecodeRequest(r, &decoded)
+	decoded := api.SnakeRequest{}
+	err := api.DecodeSnakeRequest(r, &decoded)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	dump(decoded)
-	respond(w, nil)
+	respond(w, "This is the end beautiful friend")
 }
 
 func Ping(res http.ResponseWriter, req *http.Request) {
