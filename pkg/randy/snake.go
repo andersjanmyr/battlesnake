@@ -8,7 +8,7 @@ import (
 )
 
 type snake struct {
-	lastMove string
+	lastMove api.Move
 }
 
 var _ api.BattleSnake = &snake{}
@@ -21,8 +21,8 @@ func New() api.BattleSnake {
 
 func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 	return &api.StartResponse{
-		HeadType: "fang",
-		TailType: "block-bum",
+		HeadType: api.HeadFang,
+		TailType: api.TailBlockBum,
 	}
 }
 

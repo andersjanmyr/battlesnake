@@ -16,5 +16,5 @@ func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 	return &api.StartResponse{}
 }
 func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
-	return &api.MoveResponse{Move: "down"}
+	return &api.MoveResponse{Move: api.Down}
 }

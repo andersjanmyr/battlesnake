@@ -37,20 +37,92 @@ type Snake struct {
 
 type StartResponse struct {
 	Color    string `json:"color,omitempty"`
-	HeadType string `json:"headType,omitempty"`
-	TailType string `json:"tailType,omitempty"`
+	HeadType Head   `json:"headType,omitempty"`
+	TailType Tail   `json:"tailType,omitempty"`
 }
 
 type MoveResponse struct {
-	Move string `json:"move"`
+	Move Move `json:"move"`
+}
+
+type Move string
+
+const (
+	Up    Move = "up"
+	Down  Move = "down"
+	Left  Move = "left"
+	Right Move = "right"
+)
+
+var Moves = []Move{Up, Down, Left, Right}
+
+type Head string
+
+const (
+	HeadBeluga   Head = "beluga"
+	HeadBendr    Head = "bendr"
+	HeadDead     Head = "dead"
+	HeadEvil     Head = "evil"
+	HeadFang     Head = "fang"
+	HeadPixel    Head = "pixel"
+	HeadRegular  Head = "regular"
+	HeadSafe     Head = "safe"
+	HeadSandWorm Head = "sand-worm"
+	HeadSilly    Head = "silly"
+	HeadSmile    Head = "smile"
+	HeadTongue   Head = "tongue"
+)
+
+var Heads = []Head{
+	HeadBeluga,
+	HeadBendr,
+	HeadDead,
+	HeadEvil,
+	HeadFang,
+	HeadPixel,
+	HeadRegular,
+	HeadSafe,
+	HeadSandWorm,
+	HeadSilly,
+	HeadSmile,
+	HeadTongue,
+}
+
+type Tail string
+
+const (
+	TailRegular     Tail = "regular"
+	TailBlockBum    Tail = "block-bum"
+	TailBolt        Tail = "bolt"
+	TailCurled      Tail = "curled"
+	TailFatRattle   Tail = "fat-rattle"
+	TailFreckled    Tail = "freckled"
+	TailHook        Tail = "hook"
+	TailPixel       Tail = "pixel"
+	TailRoundBum    Tail = "round-bum"
+	TailSharp       Tail = "sharp"
+	TailSkinny      Tail = "skinny"
+	TailSmallRattle Tail = "small-rattle"
+)
+
+var Tails = []Tail{
+	TailRegular,
+	TailBlockBum,
+	TailBolt,
+	TailCurled,
+	TailFatRattle,
+	TailFreckled,
+	TailHook,
+	TailPixel,
+	TailRoundBum,
+	TailSharp,
+	TailSkinny,
+	TailSmallRattle,
 }
 
 func DecodeSnakeRequest(req *http.Request, decoded *SnakeRequest) error {
 	err := json.NewDecoder(req.Body).Decode(&decoded)
 	return err
-}
-func NewMoveResponse(move string) *MoveResponse {
-	return &MoveResponse{Move: move}
 }
 
 func DecodeRequest(req *http.Request, decoded interface{}) error {

@@ -6,39 +6,6 @@ import (
 	"github.com/andersjanmyr/battlesnake/api"
 )
 
-var Moves = []string{"up", "down", "left", "right"}
-
-var Heads = []string{
-	"regular",
-	"beluga",
-	"bendr",
-	"dead",
-	"evil",
-	"fang",
-	"pixel",
-	"safe",
-	"sand-worm",
-	"shades",
-	"silly",
-	"smile",
-	"tongue",
-}
-
-var Tails = []string{
-	"regular",
-	"block-bum",
-	"bolt",
-	"curled",
-	"fat-rattle",
-	"freckled",
-	"hook",
-	"pixel",
-	"round-bum",
-	"sharp",
-	"skinny",
-	"small-rattle",
-}
-
 type Value int
 
 const (
@@ -48,9 +15,9 @@ const (
 	Wall
 )
 
-func PossibleMoves(req *api.SnakeRequest, direction string) []string {
+func PossibleMoves(req *api.SnakeRequest, direction api.Move) []api.Move {
 	ms := remove(moves(), Opposite(direction))
-	mz := []string{}
+	mz := []api.Move{}
 	for _, m := range ms {
 		c := nextCoord(req.You.Body[0], m)
 		fmt.Println("next", req.You.Body[0], m, c)
@@ -62,11 +29,11 @@ func PossibleMoves(req *api.SnakeRequest, direction string) []string {
 	return mz
 }
 
-func moves() []string {
-	return append(Moves[:0:0], Moves...)
+func moves() []api.Move {
+	return append(api.Moves[:0:0], api.Moves...)
 }
 
-func remove(l []string, item string) []string {
+func remove(l []api.Move, item api.Move) []api.Move {
 	for i, other := range l {
 		if other == item {
 			return append(l[:i], l[i+1:]...)
@@ -75,14 +42,14 @@ func remove(l []string, item string) []string {
 	return l
 }
 
-var opposites = map[string]string{
-	"up":    "down",
-	"down":  "up",
-	"left":  "right",
-	"right": "left",
+var opposites = map[api.Move]api.Move{
+	api.Up:    api.Down,
+	api.Down:  api.Up,
+	api.Right: api.Left,
+	api.Left:  api.Right,
 }
 
-func Opposite(dir string) string {
+func Opposite(dir api.Move) api.Move {
 	return opposites[dir]
 }
 
@@ -110,18 +77,18 @@ func coordTaken(cs []api.Coord, v api.Coord) bool {
 	return false
 }
 
-func nextCoord(coord api.Coord, direction string) api.Coord {
+func nextCoord(coord api.Coord, direction api.Move) api.Coord {
 	c := coord
-	if direction == "up" {
+	if direction == api.Up {
 		c.Y = c.Y - 1
 	}
-	if direction == "down" {
+	if direction == api.Down {
 		c.Y = c.Y + 1
 	}
-	if direction == "right" {
+	if direction == api.Right {
 		c.X = c.X + 1
 	}
-	if direction == "left" {
+	if direction == api.Left {
 		c.X = c.X - 1
 	}
 	return c

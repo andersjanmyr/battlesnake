@@ -8,13 +8,13 @@ import (
 )
 
 type snake struct {
-	lastMove       string
-	secondLastMove string
+	lastMove       api.Move
+	secondLastMove api.Move
 }
 
 var _ api.BattleSnake = &snake{}
 
-var horiz = []string{"left", "right"}
+var horiz = []api.Move{api.Left, api.Right}
 
 // New creates a battlesnake
 func New() api.BattleSnake {
@@ -24,8 +24,8 @@ func New() api.BattleSnake {
 
 func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 	return &api.StartResponse{
-		HeadType: "smile",
-		TailType: "hook",
+		HeadType: api.HeadSmile,
+		TailType: api.TailHook,
 	}
 }
 
@@ -51,7 +51,7 @@ func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
 	return s.moveResponse(moves[0])
 }
 
-func (s *snake) moveResponse(move string) *api.MoveResponse {
+func (s *snake) moveResponse(move api.Move) *api.MoveResponse {
 	if move != s.lastMove {
 		s.secondLastMove = s.lastMove
 	}
@@ -60,7 +60,7 @@ func (s *snake) moveResponse(move string) *api.MoveResponse {
 	return &api.MoveResponse{Move: move}
 }
 
-func contains(moves []string, move string) bool {
+func contains(moves []api.Move, move api.Move) bool {
 	for _, m := range moves {
 		if m == move {
 			return true
