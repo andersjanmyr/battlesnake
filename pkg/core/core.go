@@ -49,7 +49,7 @@ const (
 )
 
 func PossibleMoves(req *api.SnakeRequest, direction string) []string {
-	ms := remove(moves(), opposite(direction))
+	ms := remove(moves(), Opposite(direction))
 	mz := []string{}
 	for _, m := range ms {
 		c := nextCoord(req.You.Body[0], m)
@@ -82,7 +82,7 @@ var opposites = map[string]string{
 	"right": "left",
 }
 
-func opposite(dir string) string {
+func Opposite(dir string) string {
 	return opposites[dir]
 }
 

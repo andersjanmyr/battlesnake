@@ -25,6 +25,7 @@ func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 		TailType: "block-bum",
 	}
 }
+
 func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
 	moves := core.PossibleMoves(r, s.lastMove)
 	if len(moves) == 0 {
