@@ -29,6 +29,9 @@ func (s *snake) Start(r *api.SnakeRequest) *api.StartResponse {
 }
 func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
 	moves := core.PossibleMoves(r, s.lastMove)
+	if len(moves) == 0 {
+		return &api.MoveResponse{Move: s.lastMove}
+	}
 	random := rand.Intn(len(moves))
 	s.lastMove = moves[random]
 	fmt.Println(moves, s.lastMove)
