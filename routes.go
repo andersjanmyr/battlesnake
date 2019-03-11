@@ -5,36 +5,8 @@ import (
 	"net/http"
 
 	"github.com/andersjanmyr/battlesnake/api"
-	"github.com/andersjanmyr/battlesnake/pkg/empty"
-	"github.com/andersjanmyr/battlesnake/pkg/horry"
-	"github.com/andersjanmyr/battlesnake/pkg/randy"
 	"github.com/gorilla/mux"
 )
-
-func initSnake(kind string) api.BattleSnake {
-	switch kind {
-	case "empty":
-		return empty.New()
-	case "horry":
-		return horry.New()
-	case "randy":
-		return randy.New()
-	default:
-		return randy.New()
-	}
-}
-
-var snakes = map[string]api.BattleSnake{}
-
-func getBattleSnake(kind, id string) api.BattleSnake {
-	key := fmt.Sprintf("%s-%s", kind, id)
-	if snake := snakes[key]; snake != nil {
-		return snake
-	}
-	snake := initSnake(kind)
-	snakes[key] = snake
-	return snake
-}
 
 func Index(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
