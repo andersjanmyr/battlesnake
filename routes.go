@@ -80,7 +80,9 @@ func Move(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	battleSnake := getBattleSnake(vars["kind"], vars["id"])
-	respond(w, battleSnake.Move(&decoded))
+	move := battleSnake.Move(&decoded)
+	record(&decoded, move)
+	respond(w, move)
 }
 
 func End(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +93,7 @@ func End(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dump(decoded)
+	record(&decoded, nil)
 	respond(w, "This is the end beautiful friend")
 }
 

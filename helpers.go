@@ -7,8 +7,12 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
+
+	"github.com/andersjanmyr/battlesnake/api"
+	"github.com/andersjanmyr/battlesnake/pkg/core"
 )
 
 func LocalhostToIP(next http.Handler) http.Handler {
@@ -102,4 +106,35 @@ type LoggingResponseWriter struct {
 func (res *LoggingResponseWriter) WriteHeader(code int) {
 	res.statusCode = code
 	res.ResponseWriter.WriteHeader(code)
+}
+
+func record(req *api.SnakeRequest, moveResponse *api.MoveResponse) {
+	move := "end"
+	if moveResponse != nil {
+		move = string(moveResponse.Move)
+	}
+
+	if req.You.Name == "Randy" {
+		fmt.Printf("%s,%s,%d,%t\n", boardToString(req.Board, req.You), move, req.Turn, isAlive(req))
+	}
+}
+
+func isAlive(req *api.SnakeRequest) bool {
+	for _, s := range req.Board.Snakes {
+		if s.ID == req.You.ID {
+			return true
+		}
+	}
+	return false
+}
+
+func boardToString(b api.Board, you api.Snake) string {
+	arr := []string{}
+	for x := 0; x < b.Width; x++ {
+		for y := 0; y < b.Height; y++ {
+			v := core.ValueAt(b, you, api.Coord{X: x, Y: y})
+			arr = append(arr, strconv.Itoa(int(v)))
+		}
+	}
+	return strings.Join(arr, ",")
 }
