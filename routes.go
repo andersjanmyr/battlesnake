@@ -66,6 +66,7 @@ func End(w http.ResponseWriter, r *http.Request) {
 	}
 	dump(decoded)
 	record(&decoded, nil)
+	closeRecord(&decoded)
 	respond(w, "This is the end beautiful friend")
 }
 

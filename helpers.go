@@ -136,15 +136,34 @@ func (res *LoggingResponseWriter) WriteHeader(code int) {
 	res.ResponseWriter.WriteHeader(code)
 }
 
+var files = map[string]*os.File{}
+
+func getFile(req *api.SnakeRequest) *os.File {
+	key := fmt.Sprintf("./tmp/%s-%s.csv", req.You.Name, req.You.ID)
+	if file := files[key]; file != nil {
+		return file
+	}
+	file, err := os.Create(key)
+	if err != nil {
+		fmt.Println(err)
+	}
+	files[key] = file
+	return file
+}
+
 func record(req *api.SnakeRequest, moveResponse *api.MoveResponse) {
 	move := "end"
 	if moveResponse != nil {
 		move = string(moveResponse.Move)
 	}
 
-	if req.You.Name == "Randy" {
-		fmt.Printf("%s,%s,%d,%t\n", boardToString(req.Board, req.You), move, req.Turn, isAlive(req))
-	}
+	file := getFile(req)
+	fmt.Fprintf(file, "%s,%s,%d,%t\n", boardToString(req.Board, req.You), move, req.Turn, isAlive(req))
+}
+
+func closeRecord(req *api.SnakeRequest) {
+	file := getFile(req)
+	file.Close()
 }
 
 func isAlive(req *api.SnakeRequest) bool {
