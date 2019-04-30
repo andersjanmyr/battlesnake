@@ -43,6 +43,10 @@ func getBattleSnake(kind, id string) api.BattleSnake {
 	return snake
 }
 
+func GetSnakeKinds() string {
+	return "randy, horry"
+}
+
 func LocalhostToIP(next http.Handler) http.Handler {
 	ip := IP()
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

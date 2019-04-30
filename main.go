@@ -24,8 +24,9 @@ func main() {
 	// Add filename into logging messages
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	url := fmt.Sprintf("http://%s:%s/", IP(), port)
+	url := fmt.Sprintf("http://%s:%s/{kind}/{id}", IP(), port)
 	log.Printf("Server started at url\n%s\n", url)
+	log.Printf("Available snakes are: %s\n", GetSnakeKinds())
 	http.ListenAndServe(":"+port, router)
 }
 
