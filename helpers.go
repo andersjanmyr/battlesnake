@@ -15,6 +15,7 @@ import (
 	"github.com/andersjanmyr/battlesnake/pkg/core"
 	"github.com/andersjanmyr/battlesnake/pkg/empty"
 	"github.com/andersjanmyr/battlesnake/pkg/horry"
+	"github.com/andersjanmyr/battlesnake/pkg/hungry"
 	"github.com/andersjanmyr/battlesnake/pkg/randy"
 )
 
@@ -26,6 +27,8 @@ func initSnake(kind string) api.BattleSnake {
 		return horry.New()
 	case "randy":
 		return randy.New()
+	case "hungry":
+		return hungry.New()
 	default:
 		return randy.New()
 	}
@@ -44,7 +47,7 @@ func getBattleSnake(kind, id string) api.BattleSnake {
 }
 
 func GetSnakeKinds() string {
-	return "randy, horry"
+	return "randy, horry, hungry"
 }
 
 func LocalhostToIP(next http.Handler) http.Handler {
