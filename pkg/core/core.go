@@ -21,9 +21,9 @@ func PossibleMoves(req *api.SnakeRequest, direction api.Move) []api.Move {
 	mz := []api.Move{}
 	for _, m := range ms {
 		c := nextCoord(req.You.Body[0], m)
-		fmt.Println("next", req.You.Body[0], m, c)
 		v := ValueAt(req.Board, req.You, c)
-		if v == Food || v == Empty || v == You {
+		fmt.Println("next", req.You.Body[0], m, c, v)
+		if v == Food || v == Empty {
 			mz = append(mz, m)
 		}
 	}
