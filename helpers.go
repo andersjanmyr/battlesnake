@@ -19,6 +19,16 @@ import (
 	"github.com/andersjanmyr/battlesnake/pkg/randy"
 )
 
+var moveMap map[api.Move]int
+
+func init() {
+	moveMap = map[api.Move]int{}
+	moveMap[api.Up] = 1
+	moveMap[api.Down] = 2
+	moveMap[api.Left] = 3
+	moveMap[api.Right] = 4
+}
+
 func initSnake(kind string) api.BattleSnake {
 	switch kind {
 	case "empty":
@@ -143,34 +153,48 @@ func (res *LoggingResponseWriter) WriteHeader(code int) {
 	res.ResponseWriter.WriteHeader(code)
 }
 
-var files = map[string]*os.File{}
+type Data struct {
+	values *os.File
+	labels *os.File
+}
 
-func getFile(req *api.SnakeRequest) *os.File {
+var datas = map[string]Data{}
+
+func getFile(req *api.SnakeRequest) Data {
 	key := fmt.Sprintf("./tmp/%s-%s.csv", req.You.Name, req.You.ID)
-	if file := files[key]; file != nil {
-		return file
+	labelsKey := fmt.Sprintf("./tmp/%s-%s-labels.csv", req.You.Name, req.You.ID)
+	if data, ok := datas[key]; ok {
+		return data
 	}
-	file, err := os.Create(key)
+	values, err := os.Create(key)
+	labels, err := os.Create(labelsKey)
+	data := Data{values: values, labels: labels}
 	if err != nil {
 		fmt.Println(err)
 	}
-	files[key] = file
-	return file
+	datas[key] = data
+	return data
 }
 
 func record(req *api.SnakeRequest, moveResponse *api.MoveResponse) {
-	move := "end"
-	if moveResponse != nil {
-		move = string(moveResponse.Move)
-	}
 
-	file := getFile(req)
-	fmt.Fprintf(file, "%s,%s,%d,%t\n", boardToString(req.Board, req.You), move, req.Turn, isAlive(req))
+	data := getFile(req)
+	fmt.Fprintln(data.values, boardToString(req.Board, req.You))
+	if moveResponse == nil {
+		fmt.Fprintln(data.labels, 0)
+	} else {
+		fmt.Fprintln(data.labels, moveToNumber(moveResponse.Move))
+	}
+}
+
+func moveToNumber(move api.Move) int {
+	return moveMap[move]
 }
 
 func closeRecord(req *api.SnakeRequest) {
-	file := getFile(req)
-	file.Close()
+	data := getFile(req)
+	data.values.Close()
+	data.labels.Close()
 }
 
 func isAlive(req *api.SnakeRequest) bool {
