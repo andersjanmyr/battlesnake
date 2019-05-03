@@ -17,7 +17,7 @@ const (
 )
 
 func PossibleMoves(req *api.SnakeRequest, direction api.Move) []api.Move {
-	ms := remove(moves(), Opposite(direction))
+	ms := Remove(moves(), Opposite(direction))
 	mz := []api.Move{}
 	for _, m := range ms {
 		c := nextCoord(req.You.Body[0], m)
@@ -34,7 +34,7 @@ func moves() []api.Move {
 	return append(api.Moves[:0:0], api.Moves...)
 }
 
-func remove(l []api.Move, item api.Move) []api.Move {
+func Remove(l []api.Move, item api.Move) []api.Move {
 	for i, other := range l {
 		if other == item {
 			return append(l[:i], l[i+1:]...)

@@ -34,6 +34,13 @@ func (s *snake) Move(r *api.SnakeRequest) *api.MoveResponse {
 	if len(moves) == 0 {
 		return &api.MoveResponse{Move: s.lastMove}
 	}
+	head := r.You.Body[0]
+	if len(moves) > 1 && head.X < 2 {
+		moves = core.Remove(moves, api.Left)
+	}
+	if len(moves) > 1 && head.X > r.Board.Width-3 {
+		moves = core.Remove(moves, api.Right)
+	}
 	if contains(horiz, s.lastMove) && contains(moves, s.lastMove) {
 		return s.moveResponse(s.lastMove)
 	}
